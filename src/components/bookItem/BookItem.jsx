@@ -1,6 +1,11 @@
-import { Badge, Card } from "react-bootstrap";
+import { Badge, Card, Button } from "react-bootstrap";
 
-const BookItem = ({ title, author, rating, pageCount, imageUrl, available }) => {
+const BookItem = ({ title, author, rating, pageCount, imageUrl, available, onBookSelected }) => {
+
+    const handleClick = () => {
+        onBookSelected(title)
+    }
+
     return (
         <Card style={{ width: "22rem" }} className="mx-3">
             <Card.Img
@@ -18,9 +23,11 @@ const BookItem = ({ title, author, rating, pageCount, imageUrl, available }) => 
                 </div>
                 <Card.Title>{title}</Card.Title>
                 <Card.Subtitle>{author}</Card.Subtitle>
-                <div>{rating?.length} estrellas</div>
+                <div>{rating} estrella{rating > 1 ? 's' : ''}</div>
                 <p>{pageCount} páginas</p>
-
+                <Button onClick={handleClick}>
+                    Seleccionar libro
+                </Button>
             </Card.Body>
         </Card>
 

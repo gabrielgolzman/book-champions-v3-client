@@ -2,6 +2,7 @@
 import Books from './components/books/Books';
 
 import './App.css'
+import NewBook from './components/newBook/NewBook';
 
 const books = [
   {
@@ -44,10 +45,21 @@ const books = [
 
 
 const App = () => {
+
+  const handleBookAdded = (enteredBook) => {
+    const bookData = {
+      ...enteredBook,
+      id: Math.random()
+    }
+
+    console.log(bookData);
+  }
+
   return (
-    <div>
+    <div className="d-flex flex-column align-items-center">
       <h2>Book champions app</h2>
       <p>¡Quiero leer libros!</p>
+      <NewBook onBookAdded={handleBookAdded} />
       <Books books={books} />
     </div>
   )
