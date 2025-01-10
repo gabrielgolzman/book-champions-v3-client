@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
+import { useNavigate } from "react-router";
 
 const NewBook = ({ onBookAdded }) => {
     const [title, setTitle] = useState("");
@@ -8,6 +9,8 @@ const NewBook = ({ onBookAdded }) => {
     const [pageCount, setPageCount] = useState("");
     const [imageUrl, setImageUrl] = useState("");
     const [available, setAvailable] = useState(false);
+
+    const navigate = useNavigate();
 
     const handleChangeTitle = (event) => {
         setTitle(event.target.value);
@@ -51,6 +54,10 @@ const NewBook = ({ onBookAdded }) => {
         setPageCount("");
         setImageUrl("");
         setAvailable(false);
+    }
+
+    const handleGoBack = () => {
+        navigate("/library");
     }
 
     return (
@@ -114,8 +121,8 @@ const NewBook = ({ onBookAdded }) => {
                                 value={imageUrl} />
                         </Form.Group>
                     </Row>
-                    <Row className="justify-content-end">
-                        <Col md={3} className="d-flex flex-column justify-content-end align-items-end">
+                    <Row>
+                        <Col className="d-flex flex-column justify-content-end align-items-end">
                             <Form.Check
                                 type="switch"
                                 id="available"
@@ -123,6 +130,13 @@ const NewBook = ({ onBookAdded }) => {
                                 label="¿Disponible?"
                                 onChange={handleAvailabilityChange}
                                 checked={available} />
+
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col />
+                        <Col md={6} className="d-flex justify-content-end">
+                            <Button onClick={handleGoBack} className="px-3 me-3" variant="secondary">Volver</Button>
                             <Button variant="primary" type="submit">
                                 Agregar lectura
                             </Button>

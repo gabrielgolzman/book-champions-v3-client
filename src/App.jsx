@@ -1,80 +1,41 @@
 import { useState } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 
-import NewBook from "./components/library/newBook/NewBook";
-import Books from "./components/library/books/Books";
 import Login from './components/auth/login/Login';
+import Dashboard from './components/library/dashboard/Dashboard';
+import Protected from './components/auth/protected/Protected';
+import NotFound from './components/auth/notFound/NotFound';
 
 import './App.css'
 
-const books = [
-  {
-    id: 1,
-    title: "100 años de soledad",
-    author: "Gabriel García Marquez",
-    rating: 5,
-    pageCount: 410,
-    imageUrl:
-      "https://images.cdn3.buscalibre.com/fit-in/360x360/61/8d/618d227e8967274cd9589a549adff52d.jpg",
-    available: true
-  },
-  {
-    id: 2,
-    title: "Asesinato en el Orient Express",
-    author: "Agatha Christie",
-    rating: 4,
-    pageCount: 256,
-    imageUrl:
-      "https://m.media-amazon.com/images/I/71RFyM95qwL._AC_UF1000,1000_QL80_.jpg",
-    available: true
-  },
-  {
-    id: 3,
-    title: "Las dos torres",
-    author: "J.R.R Tolkien",
-    rating: 5,
-    pageCount: 352,
-    imageUrl:
-      "https://m.media-amazon.com/images/I/A1y0jd28riL._AC_UF1000,1000_QL80_.jpg",
-    available: true
-  },
-  {
-    id: 4,
-    title: "50 sombras de Grey",
-    author: "E.L James",
-    rating: 1,
-    pageCount: 514,
-    imageUrl:
-      "https://prodimage.images-bn.com/pimages/9781728260839_p0_v2_s1200x630.jpg",
-    available: true
-  },
-];
-
-
 const App = () => {
-  const [bookList, setBookList] = useState(books);
+  const [loggedIn, setLoggedIn] = useState(false);
 
-
-
-  const handleBookAdded = (enteredBook) => {
-    const bookData = {
-      ...enteredBook,
-      id: Math.random()
-    }
-
-    setBookList(prevBookList => [bookData, ...prevBookList])
+  const handleLogIn = () => {
+    setLoggedIn(true)
   }
 
-  const handleDeleteBook = (id) => {
-    setBookList(prevBookList => prevBookList.filter(book => book.id !== id));
+  const handleLogout = () => {
+    setLoggedIn(false);
   }
 
   return (
     <div className="d-flex flex-column align-items-center">
-      <h2>Book champions app</h2>
-      <p>¡Quiero leer libros!</p>
-      <NewBook onBookAdded={handleBookAdded} />
-      <Books books={bookList} onDeleteBook={handleDeleteBook} />
-      {/* <Login /> */}
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<Navigate to='login' />} />
+          <Route path='/login' element={<Login onLogin={handleLogIn} />} />
+          <Route element={<Protected isSignedIn={loggedIn} />}>
+            <Route
+              path='/library/*'
+              element={
+                <Dashboard onLogout={handleLogout} />
+              }>
+            </Route>
+          </Route>
+          <Route path='*' element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   )
 }
