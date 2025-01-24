@@ -56,6 +56,7 @@ const Login = ({ onLogin }) => {
                 <Form onSubmit={handleLogin}>
                     <FormGroup className="mb-4">
                         <Form.Control
+                            autoComplete="email"
                             type="email"
                             className={errors.email && "border border-danger"}
                             ref={emailRef}
@@ -66,6 +67,7 @@ const Login = ({ onLogin }) => {
                     </FormGroup>
                     <FormGroup className="mb-4">
                         <Form.Control
+                            autoComplete="current-pasword"
                             type="password"
                             className={errors.password && "border border-danger"}
                             ref={passwordRef}

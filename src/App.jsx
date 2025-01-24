@@ -7,6 +7,7 @@ import Protected from './components/auth/protected/Protected';
 import NotFound from './components/auth/notFound/NotFound';
 
 import './App.css'
+import { ToastContainer } from 'react-toastify';
 
 const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -21,6 +22,7 @@ const App = () => {
 
   return (
     <div className="d-flex flex-column align-items-center">
+      <ToastContainer />
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Navigate to='login' />} />

@@ -1,14 +1,20 @@
 import { useState } from "react";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router";
+import { errorToast } from "../../ui/toast/notifications";
 
-const NewBook = ({ onBookAdded }) => {
-    const [title, setTitle] = useState("");
-    const [author, setAuthor] = useState("");
-    const [rating, setRating] = useState("");
-    const [pageCount, setPageCount] = useState("");
-    const [imageUrl, setImageUrl] = useState("");
-    const [available, setAvailable] = useState(false);
+const BookForm = ({
+    book,
+    onBookAdded = () => { },
+    onBookSaved = () => { },
+    isEditing = false
+}) => {
+    const [title, setTitle] = useState(book?.title);
+    const [author, setAuthor] = useState(book?.author);
+    const [rating, setRating] = useState(book?.rating);
+    const [pageCount, setPageCount] = useState(book?.pageCount);
+    const [imageUrl, setImageUrl] = useState(book?.imageUrl);
+    const [available, setAvailable] = useState(book?.available);
 
     const navigate = useNavigate();
 
@@ -56,6 +62,36 @@ const NewBook = ({ onBookAdded }) => {
         setAvailable(false);
     }
 
+    const handleSaveBook = (event) => {
+        event.preventDefault();
+        if (!title || !author) {
+            errorToast("Título / autor requeridos");
+            return;
+        }
+        const bookData = {
+            title,
+            author,
+            rating: parseInt(rating, 10),
+            pageCount: parseInt(pageCount, 10),
+            summary: book.summary,
+            imageUrl,
+            available
+        };
+
+        fetch(`http://localhost:3000/books/${book.id}`, {
+            headers: {
+                "Content-type": "application/json"
+            },
+            method: "PUT",
+            body: JSON.stringify(bookData)
+        })
+            .then(res => res.json())
+            .then(() => {
+                onBookSaved(bookData);
+            })
+            .catch(err => console.log(err))
+    }
+
     const handleGoBack = () => {
         navigate("/library");
     }
@@ -63,7 +99,7 @@ const NewBook = ({ onBookAdded }) => {
     return (
         <Card className="m-4 w-50" bg="success">
             <Card.Body>
-                <Form className="text-white" onSubmit={handleAddBook}>
+                <Form className="text-white" onSubmit={isEditing ? handleSaveBook : handleAddBook}>
                     <Row>
                         <Col md={6}>
                             <Form.Group className="mb-3" controlId="title">
@@ -138,7 +174,7 @@ const NewBook = ({ onBookAdded }) => {
                         <Col md={6} className="d-flex justify-content-end">
                             <Button onClick={handleGoBack} className="px-3 me-3" variant="secondary">Volver</Button>
                             <Button variant="primary" type="submit">
-                                Agregar lectura
+                                {isEditing ? "Editar lectura" : "Agregar lectura"}
                             </Button>
                         </Col>
                     </Row>
@@ -148,5 +184,4 @@ const NewBook = ({ onBookAdded }) => {
     );
 };
 
-
-export default NewBook;
+export default BookForm;
