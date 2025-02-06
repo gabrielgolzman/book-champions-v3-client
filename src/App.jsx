@@ -8,6 +8,7 @@ import NotFound from './components/auth/notFound/NotFound';
 
 import './App.css'
 import { ToastContainer } from 'react-toastify';
+import Register from './components/auth/register/Register';
 
 const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -27,6 +28,7 @@ const App = () => {
         <Routes>
           <Route path='/' element={<Navigate to='login' />} />
           <Route path='/login' element={<Login onLogin={handleLogIn} />} />
+          <Route path='/register' element={<Register />} />
           <Route element={<Protected isSignedIn={loggedIn} />}>
             <Route
               path='/library/*'

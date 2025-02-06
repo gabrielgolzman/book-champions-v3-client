@@ -48,7 +48,17 @@ const Dashboard = ({ onLogout }) => {
     }
 
     const handleDeleteBook = (id) => {
-        setBookList(prevBookList => prevBookList.filter(book => book.id !== id));
+        fetch(`http://localhost:3000/books/${id}`, {
+            method: "DELETE"
+        })
+            .then(() => {
+                setBookList(prevBookList => prevBookList.filter(book => book.id !== id));
+                successToast("¡Libro eliminado!")
+            })
+            .catch(err => {
+                errorToast("Error al eliminar libro");
+            })
+
     }
 
     const handleNavigateAddBook = () => {
