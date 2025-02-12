@@ -7,9 +7,6 @@ import BookForm from "../bookForm/BookForm";
 import BookDetails from "../bookDetails/BookDetails";
 import { errorToast, successToast } from "../../ui/toast/notifications";
 
-
-
-
 const Dashboard = ({ onLogout }) => {
     const [bookList, setBookList] = useState([]);
 
@@ -18,7 +15,11 @@ const Dashboard = ({ onLogout }) => {
 
     useEffect(() => {
         if (location.pathname === "/library") {
-            fetch("http://localhost:3000/books")
+            fetch("http://localhost:3000/books", {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("book-champions-token")}`
+                }
+            })
                 .then(res => res.json())
                 .then(data => setBookList([...data]))
                 .catch(err => console.log(err));
@@ -33,7 +34,9 @@ const Dashboard = ({ onLogout }) => {
         }
         fetch("http://localhost:3000/books", {
             headers: {
-                "Content-type": "application/json"
+                "Content-type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("book-champions-token")}`
+
             },
             method: "POST",
             body: JSON.stringify(enteredBook)
@@ -49,7 +52,11 @@ const Dashboard = ({ onLogout }) => {
 
     const handleDeleteBook = (id) => {
         fetch(`http://localhost:3000/books/${id}`, {
-            method: "DELETE"
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("book-champions-token")}`
+
+            }
         })
             .then(() => {
                 setBookList(prevBookList => prevBookList.filter(book => book.id !== id));

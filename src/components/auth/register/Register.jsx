@@ -3,7 +3,7 @@ import { useNavigate } from "react-router"
 import { Form, Button, Col, FormGroup, Row } from "react-bootstrap"
 
 import AuthContainer from "../authContainer/AuthContainer"
-import { errorToast, successToast } from "../../ui/toast/notifications"
+import { successToast } from "../../ui/toast/notifications"
 
 const Register = () => {
     const [name, setName] = useState("");
@@ -55,14 +55,7 @@ const Register = () => {
             method: "POST",
             body: JSON.stringify({ name, email, password })
         })
-            .then(async res => {
-                if (!res.ok) {
-                    const errData = await res.json()
-                    errorToast(errData.message || "Algo ha salido mal")
-                    throw new Error(errData.message)
-                }
-                return res.json();
-            })
+            .then(res => res.json())
             .then(() => {
                 successToast("¡Usuario creado exitosamente!")
                 navigate("/login");
