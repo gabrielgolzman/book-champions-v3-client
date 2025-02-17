@@ -2,6 +2,9 @@ import { useRef, useState } from "react";
 import { Button, Col, Form, FormGroup, Row } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import AuthContainer from "../authContainer/AuthContainer";
+import { validateEmail, validatePassword } from "../auth.helpers";
+import { errorToast } from "../../ui/toast/notifications";
+import { loginUser } from "./Login.services";
 
 const Login = ({ onLogin }) => {
     const [email, setEmail] = useState("");
@@ -29,35 +32,34 @@ const Login = ({ onLogin }) => {
     const handleLogin = (event) => {
         event.preventDefault();
 
-        if (!emailRef.current.value.length) {
+        if (!emailRef.current.value.length || !validateEmail(email)) {
             setErrors({ ...errors, email: true });
-            alert("¡Email vacío!");
+            errorToast("¡Email incorrecto!");
             emailRef.current.focus();
             return;
         }
 
-        else if (!password.length || password.length < 7) {
+        else if (!password.length || !validatePassword(password, 7, null, true, true)) {
             setErrors({ ...errors, password: true });
-            alert("¡Password vacío!");
+            errorToast("¡Password incorrecto!");
             passwordRef.current.focus();
             return;
         }
 
         setErrors({ email: false, password: false })
         onLogin();
-        fetch("http://localhost:3000/login", {
-            headers: {
-                "Content-type": "application/json"
-            },
-            method: "POST",
-            body: JSON.stringify({ email, password })
-        })
-            .then(res => res.json())
-            .then(token => {
+
+        loginUser(
+            email,
+            password,
+            token => {
                 localStorage.setItem("book-champions-token", token)
                 navigate("/library");
-            })
-            .catch(err => console.log(err))
+            },
+            err => {
+                errorToast(err.message)
+            }
+        )
     }
 
     const handleRegisterClick = () => {
@@ -88,7 +90,7 @@ const Login = ({ onLogin }) => {
                         onChange={handlePasswordChange}
                         value={password}
                     />
-                    {errors.password && <p className="mt-2 text-danger">Debe ingresar un password</p>}
+                    {errors.password && <p className="mt-2 text-danger">Debe ingresar un password correcto</p>}
                 </FormGroup>
                 <Row>
                     <Col />

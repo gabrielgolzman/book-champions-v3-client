@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { errorToast } from "../../ui/toast/notifications";
+import { editBook } from "./BookForm.services";
 
 const BookForm = ({
     book,
@@ -78,18 +79,14 @@ const BookForm = ({
             available
         };
 
-        fetch(`http://localhost:3000/books/${book.id}`, {
-            headers: {
-                "Content-type": "application/json"
-            },
-            method: "PUT",
-            body: JSON.stringify(bookData)
-        })
-            .then(res => res.json())
-            .then(() => {
+        editBook(
+            book.id,
+            bookData,
+            () => {
                 onBookSaved(bookData);
-            })
-            .catch(err => console.log(err))
+            },
+            err => errorToast(err.message)
+        );
     }
 
     const handleGoBack = () => {

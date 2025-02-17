@@ -3,7 +3,9 @@ import { useNavigate } from "react-router"
 import { Form, Button, Col, FormGroup, Row } from "react-bootstrap"
 
 import AuthContainer from "../authContainer/AuthContainer"
-import { successToast } from "../../ui/toast/notifications"
+import { errorToast, successToast } from "../../ui/toast/notifications"
+import { validateEmail, validatePassword, validateString } from "../auth.helpers"
+import { registerUrser } from "./Register.services"
 
 const Register = () => {
     const [name, setName] = useState("");
@@ -32,35 +34,36 @@ const Register = () => {
     const handleRegister = (event) => {
         event.preventDefault();
 
-        if (!name.length) {
+        if (!name.length || !validateString(name, null, 13)) {
+            errorToast("¡Nombre de usuario incorrecto!");
             setErrors({ ...errors, name: true });
             return;
         }
-        if (!email.length) {
+        if (!email.length || !validateEmail(email)) {
+            errorToast("¡Email incorrecto!");
             setErrors({ ...errors, email: true });
             return;
         }
 
-        else if (!password.length || password.length < 7) {
+        else if (!password.length || !validatePassword(password, 7, null, true, true)) {
+            errorToast("¡Password incorrecto!");
             setErrors({ ...errors, password: true });
             return;
         }
 
         setErrors({ email: false, password: false })
 
-        fetch("http://localhost:3000/register", {
-            headers: {
-                "Content-type": "application/json"
-            },
-            method: "POST",
-            body: JSON.stringify({ name, email, password })
-        })
-            .then(res => res.json())
-            .then(() => {
+        registerUrser(
+            name,
+            email,
+            password,
+            () => {
                 successToast("¡Usuario creado exitosamente!")
                 navigate("/login");
-            })
-            .catch(err => console.log(err))
+            },
+            err => errorToast(err.message)
+        )
+
     }
 
     const handleLoginClick = () => {
@@ -87,7 +90,7 @@ const Register = () => {
                         placeholder="Ingresar email"
                         onChange={handleEmailChange}
                         value={email} />
-                    {errors.email && <p className="mt-2 text-danger">Debe ingresar un email</p>}
+                    {errors.email && <p className="mt-2 text-danger">Debe ingresar un email correcto</p>}
                 </FormGroup>
                 <FormGroup className="mb-4">
                     <Form.Control
@@ -98,7 +101,7 @@ const Register = () => {
                         onChange={handlePasswordChange}
                         value={password}
                     />
-                    {errors.password && <p className="mt-2 text-danger">Debe ingresar un password</p>}
+                    {errors.password && <p className="mt-2 text-danger">Debe ingresar un password correcto</p>}
                 </FormGroup>
                 <Row>
                     <Col>

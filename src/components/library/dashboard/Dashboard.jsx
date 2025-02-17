@@ -6,6 +6,7 @@ import Books from "../books/Books";
 import BookForm from "../bookForm/BookForm";
 import BookDetails from "../bookDetails/BookDetails";
 import { errorToast, successToast } from "../../ui/toast/notifications";
+import { addBook, deleteBook, getBooks } from "./Dashboard.services";
 
 const Dashboard = ({ onLogout }) => {
     const [bookList, setBookList] = useState([]);
@@ -15,14 +16,10 @@ const Dashboard = ({ onLogout }) => {
 
     useEffect(() => {
         if (location.pathname === "/library") {
-            fetch("http://localhost:3000/books", {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("book-champions-token")}`
-                }
-            })
-                .then(res => res.json())
-                .then(data => setBookList([...data]))
-                .catch(err => console.log(err));
+            getBooks(
+                data => setBookList([...data]),
+                err => errorToast(err.message)
+            )
         }
 
     }, [location])
@@ -32,39 +29,25 @@ const Dashboard = ({ onLogout }) => {
             errorToast('El autor y/o título son requeridos');
             return;
         }
-        fetch("http://localhost:3000/books", {
-            headers: {
-                "Content-type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem("book-champions-token")}`
-
-            },
-            method: "POST",
-            body: JSON.stringify(enteredBook)
-        })
-            .then(res => res.json())
-            .then(data => {
+        addBook(
+            enteredBook,
+            data => {
                 setBookList(prevBookList => [data, ...prevBookList]);
                 successToast(`¡Libro ${data.title} agregado correctamente!`)
-            })
-            .catch(err => console.log(err))
-
+            },
+            err => errorToast(err.message))
     }
 
     const handleDeleteBook = (id) => {
-        fetch(`http://localhost:3000/books/${id}`, {
-            method: "DELETE",
-            headers: {
-                "Authorization": `Bearer ${localStorage.getItem("book-champions-token")}`
-
-            }
-        })
-            .then(() => {
+        deleteBook(id,
+            () => {
                 setBookList(prevBookList => prevBookList.filter(book => book.id !== id));
                 successToast("¡Libro eliminado!")
-            })
-            .catch(err => {
+            },
+            () => {
                 errorToast("Error al eliminar libro");
-            })
+            }
+        )
 
     }
 
