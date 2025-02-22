@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router";
 import { Button, Col, Row } from "react-bootstrap";
 
@@ -7,9 +7,13 @@ import BookForm from "../bookForm/BookForm";
 import BookDetails from "../bookDetails/BookDetails";
 import { errorToast, successToast } from "../../ui/toast/notifications";
 import { addBook, deleteBook, getBooks } from "./Dashboard.services";
+import { AuthenticationContext } from "../../../services/auth/auth.context";
+import ToggleTheme from "../../ui/shared/toggleTheme/ToggleTheme";
 
-const Dashboard = ({ onLogout }) => {
+const Dashboard = () => {
     const [bookList, setBookList] = useState([]);
+
+    const { handleUserLogout } = useContext(AuthenticationContext);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -60,8 +64,9 @@ const Dashboard = ({ onLogout }) => {
             <Row className="w-100 my-3">
                 <Col />
                 <Col md={3} className="d-flex justify-content-end ">
+                    <ToggleTheme />
                     <Button className="me-3" variant="success" onClick={handleNavigateAddBook}>Agregar libro</Button>
-                    <Button onClick={onLogout}>Cerrar sesión</Button>
+                    <Button onClick={handleUserLogout}>Cerrar sesión</Button>
                 </Col>
             </Row>
             <h2>Book champions app</h2>

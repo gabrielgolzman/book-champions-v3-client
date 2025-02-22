@@ -6,6 +6,9 @@ import AuthContainer from "../authContainer/AuthContainer"
 import { errorToast, successToast } from "../../ui/toast/notifications"
 import { validateEmail, validatePassword, validateString } from "../auth.helpers"
 import { registerUrser } from "./Register.services"
+import ToggleTheme from "../../ui/shared/toggleTheme/ToggleTheme"
+import ComboLanguage from "../../ui/shared/comboLanguage/ComboLangauge"
+import { useTranslate } from "../../../custom/useTranslate/useTranslate"
 
 const Register = () => {
     const [name, setName] = useState("");
@@ -18,6 +21,8 @@ const Register = () => {
     });
 
     const navigate = useNavigate();
+
+    const t = useTranslate();
 
     const handleNameChange = (e) => {
         setName(e.target.value);
@@ -35,18 +40,18 @@ const Register = () => {
         event.preventDefault();
 
         if (!name.length || !validateString(name, null, 13)) {
-            errorToast("¡Nombre de usuario incorrecto!");
+            errorToast(`${t("username")} ${t("incorrect")}`);
             setErrors({ ...errors, name: true });
             return;
         }
         if (!email.length || !validateEmail(email)) {
-            errorToast("¡Email incorrecto!");
+            errorToast(`${t("email")} ${t("incorrect")}`);
             setErrors({ ...errors, email: true });
             return;
         }
 
         else if (!password.length || !validatePassword(password, 7, null, true, true)) {
-            errorToast("¡Password incorrecto!");
+            errorToast(`${t("password")} ${t("incorrect")}`);
             setErrors({ ...errors, password: true });
             return;
         }
@@ -72,44 +77,48 @@ const Register = () => {
     return (
         <AuthContainer>
             <Form onSubmit={handleRegister}>
+                <FormGroup>
+                    <ComboLanguage />
+                    <ToggleTheme />
+                </FormGroup>
                 <FormGroup className="mb-4">
                     <Form.Control
                         autoComplete="username"
                         type="text"
                         className={errors.name && "border border-danger"}
-                        placeholder="Ingresar nombre de usuario"
+                        placeholder={`${t("enter")} ${t("username")}`}
                         onChange={handleNameChange}
                         value={name} />
-                    {errors.name && <p className="mt-2 text-danger">Debe ingresar un nombre de usuario</p>}
+                    {errors.name && <p className="mt-2 text-danger">{t("username_empty")}</p>}
                 </FormGroup>
                 <FormGroup className="mb-4">
                     <Form.Control
                         autoComplete="email"
                         type="email"
                         className={errors.email && "border border-danger"}
-                        placeholder="Ingresar email"
+                        placeholder={`${t("enter")} ${t("email")}`}
                         onChange={handleEmailChange}
                         value={email} />
-                    {errors.email && <p className="mt-2 text-danger">Debe ingresar un email correcto</p>}
+                    {errors.email && <p className="mt-2 text-danger">{t("email_empty")}</p>}
                 </FormGroup>
                 <FormGroup className="mb-4">
                     <Form.Control
                         autoComplete="current-pasword"
                         type="password"
                         className={errors.password && "border border-danger"}
-                        placeholder="Ingresar contraseña"
+                        placeholder={`${t("enter")} ${t("password")}`}
                         onChange={handlePasswordChange}
                         value={password}
                     />
-                    {errors.password && <p className="mt-2 text-danger">Debe ingresar un password correcto</p>}
+                    {errors.password && <p className="mt-2 text-danger">{t("password_empty")}</p>}
                 </FormGroup>
                 <Row>
                     <Col>
-                        <Button variant="secondary" onClick={handleLoginClick} >Iniciar sesión</Button>
+                        <Button variant="secondary" onClick={handleLoginClick} >{t("login")}</Button>
                     </Col>
                     <Col md={6} className="d-flex justify-content-end">
                         <Button variant="primary" type="submit">
-                            Registrarse
+                            {t("register")}
                         </Button>
                     </Col>
                 </Row>

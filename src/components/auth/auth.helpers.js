@@ -1,3 +1,5 @@
+import { jwtDecode } from "jwt-decode";
+
 export const validateString = (str, minLength, maxLength) => {
     if (minLength && str.length < minLength)
         return false;
@@ -27,4 +29,19 @@ export const validatePassword = (password, minLength, maxLength, needsUppercase,
 
 
     return true;
+}
+
+export const isTokenValid = (token) => {
+    if (!token) return false;
+    try {
+        const decodedToken = jwtDecode(token);
+
+        // We need to convert Date.now() from miliseconds to seconds
+        const currentTime = Date.now() / 1000;
+
+        return currentTime < decodedToken.exp;
+    } catch (error) {
+        console.error('Error decoding token:', error);
+        return false;
+    }
 }

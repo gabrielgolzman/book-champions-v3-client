@@ -1,12 +1,18 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { Button, Col, Form, FormGroup, Row } from "react-bootstrap";
 import { useNavigate } from "react-router";
-import AuthContainer from "../authContainer/AuthContainer";
+
+import { useTranslate } from "../../../custom/useTranslate/useTranslate";
 import { validateEmail, validatePassword } from "../auth.helpers";
 import { errorToast } from "../../ui/toast/notifications";
 import { loginUser } from "./Login.services";
+import { AuthenticationContext } from "../../../services/auth/auth.context";
 
-const Login = ({ onLogin }) => {
+import AuthContainer from "../authContainer/AuthContainer";
+import ToggleTheme from "../../ui/shared/toggleTheme/ToggleTheme";
+import ComboLanguage from "../../ui/shared/comboLanguage/ComboLangauge";
+
+const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState({
@@ -16,6 +22,10 @@ const Login = ({ onLogin }) => {
 
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
+
+    const { handleUserLogin } = useContext(AuthenticationContext);
+
+    const t = useTranslate();
 
     const navigate = useNavigate();
 
@@ -34,26 +44,25 @@ const Login = ({ onLogin }) => {
 
         if (!emailRef.current.value.length || !validateEmail(email)) {
             setErrors({ ...errors, email: true });
-            errorToast("¡Email incorrecto!");
+            errorToast(`${t("email")} ${t("incorrect")}`);
             emailRef.current.focus();
             return;
         }
 
         else if (!password.length || !validatePassword(password, 7, null, true, true)) {
             setErrors({ ...errors, password: true });
-            errorToast("¡Password incorrecto!");
+            errorToast(`${t("password")} ${t("incorrect")}`);
             passwordRef.current.focus();
             return;
         }
 
         setErrors({ email: false, password: false })
-        onLogin();
 
         loginUser(
             email,
             password,
             token => {
-                localStorage.setItem("book-champions-token", token)
+                handleUserLogin(token)
                 navigate("/library");
             },
             err => {
@@ -69,16 +78,20 @@ const Login = ({ onLogin }) => {
     return (
         <AuthContainer>
             <Form onSubmit={handleLogin}>
+                <FormGroup>
+                    <ComboLanguage />
+                    <ToggleTheme />
+                </FormGroup>
                 <FormGroup className="mb-4">
                     <Form.Control
                         autoComplete="email"
                         type="email"
                         className={errors.email && "border border-danger"}
                         ref={emailRef}
-                        placeholder="Ingresar email"
+                        placeholder={`${t("enter")} ${t("email")}`}
                         onChange={handleEmailChange}
                         value={email} />
-                    {errors.email && <p className="mt-2 text-danger">Debe ingresar un email</p>}
+                    {errors.email && <p className="mt-2 text-danger">{t("email_empty")}</p>}
                 </FormGroup>
                 <FormGroup className="mb-4">
                     <Form.Control
@@ -86,23 +99,23 @@ const Login = ({ onLogin }) => {
                         type="password"
                         className={errors.password && "border border-danger"}
                         ref={passwordRef}
-                        placeholder="Ingresar contraseña"
+                        placeholder={`${t("enter")} ${t("password")}`}
                         onChange={handlePasswordChange}
                         value={password}
                     />
-                    {errors.password && <p className="mt-2 text-danger">Debe ingresar un password correcto</p>}
+                    {errors.password && <p className="mt-2 text-danger">{t("password_empty")}</p>}
                 </FormGroup>
                 <Row>
                     <Col />
                     <Col md={6} className="d-flex justify-content-end">
                         <Button variant="secondary" type="submit">
-                            Iniciar sesión
+                            {t("login")}
                         </Button>
                     </Col>
                 </Row>
                 <Row className="mt-4">
-                    <p className="text-center fw-bold">¿Aún no tenés cuenta?</p>
-                    <Button onClick={handleRegisterClick}>Registrarse</Button>
+                    <p className="text-center fw-bold">{t("login_no_account")}</p>
+                    <Button onClick={handleRegisterClick}>{t("register")}</Button>
                 </Row>
             </Form>
         </AuthContainer>
