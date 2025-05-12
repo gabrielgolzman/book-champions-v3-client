@@ -10,7 +10,7 @@ import { AuthenticationContext } from "../../../services/auth/auth.context";
 
 import AuthContainer from "../authContainer/AuthContainer";
 import ToggleTheme from "../../ui/shared/toggleTheme/ToggleTheme";
-import ComboLanguage from "../../ui/shared/comboLanguage/ComboLangauge";
+import ComboLanguage from "../../ui/shared/comboLanguage/ComboLanguage";
 
 const Login = () => {
     const [email, setEmail] = useState("");

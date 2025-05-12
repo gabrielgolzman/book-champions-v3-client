@@ -6,8 +6,7 @@ import { editBook } from "./BookForm.services";
 
 const BookForm = ({
     book,
-    onBookAdded = () => { },
-    onBookSaved = () => { },
+    onBookAdded,
     isEditing = false
 }) => {
     const [title, setTitle] = useState(book?.title);

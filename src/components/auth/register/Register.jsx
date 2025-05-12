@@ -3,12 +3,13 @@ import { useNavigate } from "react-router"
 import { Form, Button, Col, FormGroup, Row } from "react-bootstrap"
 
 import AuthContainer from "../authContainer/AuthContainer"
-import { errorToast, successToast } from "../../ui/toast/notifications"
+import { useTranslate } from "../../../custom/useTranslate/useTranslate"
 import { validateEmail, validatePassword, validateString } from "../auth.helpers"
 import { registerUrser } from "./Register.services"
+import { errorToast, successToast } from "../../ui/toast/notifications"
+
 import ToggleTheme from "../../ui/shared/toggleTheme/ToggleTheme"
-import ComboLanguage from "../../ui/shared/comboLanguage/ComboLangauge"
-import { useTranslate } from "../../../custom/useTranslate/useTranslate"
+import ComboLanguage from "../../ui/shared/comboLanguage/ComboLanguage"
 
 const Register = () => {
     const [name, setName] = useState("");
